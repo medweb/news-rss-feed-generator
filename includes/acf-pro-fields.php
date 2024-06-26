@@ -7,7 +7,9 @@ const acf_field_repeater = "rss_fields";
 const acf_field_repeater_key = "field_667c325ba8721";
 const acf_field_slug = "rss_slug";
 const acf_field_slug_key = "field_667c3267a8722";
+const acf_field_count = "feed_count";
 const acf_field_terms = "news_terms";
+
 
 // add option/settings page
 add_action( 'acf/init', function() {
@@ -94,6 +96,29 @@ add_action( 'acf/include_fields', function() {
                         'default_value' => 'custom-slug',
                         'maxlength' => '',
                         'placeholder' => '',
+                        'prepend' => '',
+                        'append' => '',
+                        'parent_repeater' => 'field_667c325ba8721',
+                    ),
+                    array(
+                        'key' => 'field_667c830e485dc',
+                        'label' => 'Number of articles to display',
+                        'name' => acf_field_count,
+                        'aria-label' => '',
+                        'type' => 'number',
+                        'instructions' => '',
+                        'required' => 0,
+                        'conditional_logic' => 0,
+                        'wrapper' => array(
+                            'width' => '',
+                            'class' => '',
+                            'id' => '',
+                        ),
+                        'default_value' => 10,
+                        'min' => 1,
+                        'max' => '',
+                        'placeholder' => '',
+                        'step' => '',
                         'prepend' => '',
                         'append' => '',
                         'parent_repeater' => 'field_667c325ba8721',
