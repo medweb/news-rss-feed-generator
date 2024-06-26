@@ -4,7 +4,9 @@ namespace news_rss_feed_generator\acf_pro_fields;
 
 const acf_taxonomy = "news_category";
 const acf_field_repeater = "rss_fields";
+const acf_field_repeater_key = "field_667c325ba8721";
 const acf_field_slug = "rss_slug";
+const acf_field_slug_key = "field_667c3267a8722";
 const acf_field_terms = "news_terms";
 
 // add option/settings page
@@ -54,7 +56,7 @@ add_action( 'acf/include_fields', function() {
                 'esc_html' => 0,
             ),
             array(
-                'key' => 'field_667c325ba8721',
+                'key' => acf_field_repeater_key,
                 'label' => 'RSS Fields',
                 'name' => acf_field_repeater,
                 'aria-label' => '',
@@ -71,12 +73,12 @@ add_action( 'acf/include_fields', function() {
                 'pagination' => 0,
                 'min' => 0,
                 'max' => 0,
-                'collapsed' => 'field_667c3267a8722',
+                'collapsed' => acf_field_slug_key,
                 'button_label' => 'Add Rss Feed',
                 'rows_per_page' => 20,
                 'sub_fields' => array(
                     array(
-                        'key' => 'field_667c3267a8722',
+                        'key' => acf_field_slug_key,
                         'label' => 'RSS Slug',
                         'name' => acf_field_slug,
                         'aria-label' => '',
@@ -146,3 +148,41 @@ add_action( 'acf/include_fields', function() {
         'show_in_rest' => 0,
     ) );
 } );
+
+add_action('acf/save_post', __NAMESPACE__ . '\\setup_flush_rewrite_rules', 5);
+function setup_flush_rewrite_rules( $post_id ) {
+
+    $current_rss_slug = get_field(acf_field_repeater, 'option');
+    $new_rss_slug = $_POST['acf'][acf_field_repeater_key];
+
+    for ($i=0; $i < sizeof($current_rss_slug); $i++) {
+        if ($current_rss_slug[$i][acf_field_slug] != $new_rss_slug["row-" . $i][acf_field_slug_key]) {
+            // rows have changed. flush rewrite rules (triggered later)
+            update_option( 'news-rss-feed-generator-rewrite-rules', 1 );
+
+        } else {
+            // slugs do match. no need to flush rules if only the taxonomy terms have changed
+        }
+    }
+}
+
+// run after nearly everything. mainly because the save_post can't flush the rules properly (the rules are flushed
+// before the new rss feed is created, so the newly defined feeds are too late)
+add_action( 'init', __NAMESPACE__ . '\\late_flush_rewrite', 999999 );
+function late_flush_rewrite() {
+
+    if ( ! $option = get_option( 'news-rss-feed-generator-rewrite-rules' ) ) {
+        return false;
+    }
+
+    if ( $option == 1 ) {
+        flush_rewrite_rules();
+
+        // clear the option, so it doesn't flush every page load
+        update_option( 'news-rss-feed-generator-rewrite-rules', 0 );
+
+    }
+
+    return true;
+
+}
