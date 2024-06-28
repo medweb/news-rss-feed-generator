@@ -8,7 +8,8 @@ const acf_field_repeater_key = "field_667c325ba8721";
 const acf_field_slug = "rss_slug";
 const acf_field_slug_key = "field_667c3267a8722";
 const acf_field_count = "feed_count";
-const acf_field_terms = "news_terms";
+const acf_field_terms_whitelist = "news_terms";
+const acf_field_terms_blacklist = "news_terms_exclude";
 
 
 // add option/settings page
@@ -125,11 +126,38 @@ add_action( 'acf/include_fields', function() {
                     ),
                     array(
                         'key' => 'field_667c33c3a8725',
-                        'label' => 'News Terms',
-                        'name' => acf_field_terms,
+                        'label' => 'Include these news terms',
+                        'name' => acf_field_terms_whitelist,
                         'aria-label' => '',
                         'type' => 'taxonomy',
-                        'instructions' => '',
+                        'instructions' => 'Include articles that contain any of these terms, as long as they don\'t also have terms that are excluded',
+                        'required' => 0,
+                        'conditional_logic' => 0,
+                        'wrapper' => array(
+                            'width' => '',
+                            'class' => '',
+                            'id' => '',
+                        ),
+                        'taxonomy' => acf_taxonomy,
+                        'add_term' => 0,
+                        'save_terms' => 0,
+                        'load_terms' => 0,
+                        'return_format' => 'id',
+                        'field_type' => 'checkbox',
+                        'bidirectional' => 0,
+                        'multiple' => 0,
+                        'allow_null' => 0,
+                        'bidirectional_target' => array(
+                        ),
+                        'parent_repeater' => 'field_667c325ba8721',
+                    ),
+                    array(
+                        'key' => 'field_667c33c3a8726',
+                        'label' => 'Exclude these news terms',
+                        'name' => acf_field_terms_blacklist,
+                        'aria-label' => '',
+                        'type' => 'taxonomy',
+                        'instructions' => 'Articles with these terms will NOT show up in the feed, even if they have other terms that would normally include them in this feed',
                         'required' => 0,
                         'conditional_logic' => 0,
                         'wrapper' => array(

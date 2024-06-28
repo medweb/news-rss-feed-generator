@@ -29,6 +29,7 @@ function register_news_rss_feeds() {
 function generate_news_rss_feeds($slug) {
 
     $rss_terms = array();
+    $rss_terms_blacklist = array();
     $count = posts_per_page;
     // go through the list of custom rss feeds until we find our slug, then loop through all the terms we want to add
     while( have_rows(\news_rss_feed_generator\acf_pro_fields\acf_field_repeater, 'option') ) {
@@ -36,7 +37,8 @@ function generate_news_rss_feeds($slug) {
         $rss_slug = get_sub_field(\news_rss_feed_generator\acf_pro_fields\acf_field_slug);
         if ($rss_slug === $slug) {
             // this is our slug. get all the taxonomy terms to use in wp_query
-            $rss_terms = get_sub_field(\news_rss_feed_generator\acf_pro_fields\acf_field_terms);
+            $rss_terms = get_sub_field(\news_rss_feed_generator\acf_pro_fields\acf_field_terms_whitelist);
+            $rss_terms_blacklist = get_sub_field(\news_rss_feed_generator\acf_pro_fields\acf_field_terms_blacklist);
             $count = get_sub_field(\news_rss_feed_generator\acf_pro_fields\acf_field_count);
         }
 
@@ -48,10 +50,18 @@ function generate_news_rss_feeds($slug) {
         'post_type' => post_type, // or any custom post type
         'posts_per_page' => $count, // Number of posts in the feed
         'tax_query' => array(
+            'relation' => 'AND',
             array(
                 'taxonomy' => \news_rss_feed_generator\acf_pro_fields\acf_taxonomy,
                 'field'    => 'term_id',
                 'terms'    => $rss_terms,
+                'operator' => 'IN',
+            ),
+            array(
+                'taxonomy' => \news_rss_feed_generator\acf_pro_fields\acf_taxonomy,
+                'field'    => 'term_id',
+                'terms'    => $rss_terms_blacklist,
+                'operator' => 'NOT IN',
             ),
         ),
     );
