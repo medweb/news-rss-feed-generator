@@ -208,13 +208,15 @@ function setup_flush_rewrite_rules( $post_id ) {
     $current_rss_slug = get_field(acf_field_repeater, 'option');
     $new_rss_slug = $_POST['acf'][acf_field_repeater_key];
 
-    for ($i=0; $i < sizeof($current_rss_slug); $i++) {
-        if ($current_rss_slug[$i][acf_field_slug] != $new_rss_slug["row-" . $i][acf_field_slug_key]) {
-            // rows have changed. flush rewrite rules (triggered later)
-            update_option( 'news-rss-feed-generator-rewrite-rules', 1 );
+    if (is_countable($current_rss_slug)) {
+        for ($i = 0; $i < sizeof($current_rss_slug); $i++) {
+            if ($current_rss_slug[$i][acf_field_slug] != $new_rss_slug["row-" . $i][acf_field_slug_key]) {
+                // rows have changed. flush rewrite rules (triggered later)
+                update_option('news-rss-feed-generator-rewrite-rules', 1);
 
-        } else {
-            // slugs do match. no need to flush rules if only the taxonomy terms have changed
+            } else {
+                // slugs do match. no need to flush rules if only the taxonomy terms have changed
+            }
         }
     }
 }

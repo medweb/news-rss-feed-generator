@@ -3,7 +3,7 @@
 Plugin Name: News RSS Feed Generator
 Plugin URI: https://github.com/medweb/news-rss-feed-generator
 Description: WordPress Plugin for creating rss feeds based on multiple taxonomy terms
-Version: 1.1.0
+Version: 1.1.1
 Author: Stephen Schrauger
 Author URI: https://github.com/medweb/news-rss-feed-generator
 License: GPL2
